@@ -29,7 +29,7 @@ const App: React.FC = () => {
     setPathCoordinates(newPathCoordinates);
 
     // Update the drone position based on time
-    const totalSteps = 100; // Adjust this value based on the desired animation smoothness
+    const totalSteps = 20; // Adjust this value based on the desired animation smoothness
     const stepInterval = (+time * 1000) / totalSteps;
     let step = 1;
     const timer = setInterval(() => {

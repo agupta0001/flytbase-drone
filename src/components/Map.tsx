@@ -8,18 +8,11 @@ interface MapProps {
 }
 
 const MapComp: React.FC<MapProps> = ({ dronePosition, pathCoordinates }) => {
-  const mapRef = useRef<Map | null>(null);
-
-  const [simulatedPosition, setSimulatedPosition] = useState<{
-    latitude: number;
-    longitude: number;
-  }>(dronePosition);
-
   useEffect(() => {
-    if (mapRef.current) return;
     mapboxgl.accessToken =
       "pk.eyJ1IjoidG92ZWNpMTM0NiIsImEiOiJjbGt6cHFqZHQwbG41M3FxcDBpa2o0djJhIn0.EeUIgA253vxMhEdgjcSOWQ"; // Replace with your actual Mapbox access token
-    mapRef.current = new mapboxgl.Map({
+
+    const map = new mapboxgl.Map({
       container: "map",
       style: "mapbox://styles/mapbox/streets-v11", // Replace with your preferred Mapbox style
       center: [dronePosition.longitude, dronePosition.latitude],
@@ -29,9 +22,9 @@ const MapComp: React.FC<MapProps> = ({ dronePosition, pathCoordinates }) => {
     const markerElement = document.createElement("div");
     markerElement.className = "drone-marker";
 
-    new mapboxgl.Marker(markerElement)
+    const marker = new mapboxgl.Marker(markerElement)
       .setLngLat([dronePosition.longitude, dronePosition.latitude])
-      .addTo(mapRef.current);
+      .addTo(map);
 
     // Draw the drone's path
     if (pathCoordinates.length > 1) {
@@ -44,9 +37,8 @@ const MapComp: React.FC<MapProps> = ({ dronePosition, pathCoordinates }) => {
         },
       };
 
-      mapRef.current.on("load", () => {
-        if (!mapRef.current) return;
-        mapRef.current.addLayer({
+      map.on("load", () => {
+        map.addLayer({
           id: "route",
           type: "line",
           source: {
@@ -60,12 +52,12 @@ const MapComp: React.FC<MapProps> = ({ dronePosition, pathCoordinates }) => {
         });
       });
     }
-  });
 
-  useEffect(() => {
-    // Update the drone position during the simulation
-    setSimulatedPosition(dronePosition);
-  }, [dronePosition]);
+    return () => {
+      map.remove();
+      marker.remove();
+    };
+  });
 
   return <div id="map"></div>;
 };
