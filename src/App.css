@@ -1,0 +1,12 @@
+.drone-marker {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-image: url("/drone.png");
+  background-size: cover;
+}
+
+#map {
+  width: 100vw;
+  height: calc(100vh - 57px);
+}
